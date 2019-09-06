@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Post')
+@section('title', 'Edit Post')
 
-@section('page-title', 'Post')
+@section('page-title', 'Edit Post')
 
 
 @section('content')
@@ -11,23 +11,25 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Create New Post</h3>
+                <h3 class="card-title">Edit Post</h3>
                 <div class="card-options">
                     <a href="{{ route('post.index') }}" class="btn btn-primary"><i class="fe fe-arrow-left"></i>
                         Back</a>
                 </div>
             </div>
             <div class="card-body">
-                <form action="{{ route('post.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('post.update', $post->id) }}" method="post" enctype="multipart/form-data">
                     @csrf
+                    @method('PATCH')
                     <fieldset class="form-fieldset">
                         <div class="form-group">
                             <label class="form-label">Post Title<span class="form-required">*</span></label>
-                            <input type="text" class="form-control" name="title" required>
+                            <input type="text" class="form-control" name="title" value="{{ $post->title }}" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Post Content<span class="form-required">*</span></label>
-                            <textarea name="body" id="" cols="30" rows="10" class="form-control" required></textarea>
+                            <textarea name="body" id="" cols="30" rows="10" class="form-control"
+                                required>{{ $post->body }}</textarea>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Feature Image</label>
@@ -38,8 +40,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Published Time<span class="form-required">*</span></label>
-                            <input type="date" name="created_at" class="form-control"
-                                value="<?php echo date('Y-m-d'); ?>" required>
+                            <input type="date" name="created_at" class="form-control" value="{{ $post->created_at }}"
+                                required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Categori<span class="form-required">*</span></label>

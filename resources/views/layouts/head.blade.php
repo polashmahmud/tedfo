@@ -19,6 +19,8 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext">
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
     <link rel="stylesheet" href={{ asset("css/sweetalert2.min.css") }}>
     <script src={{ asset("js/sweetalert2.min.js") }}></script>
     <script src={{ asset("assets/js/require.min.js") }}></script>
@@ -34,6 +36,7 @@
     <!-- Input Mask Plugin -->
     <script src={{ asset("assets/plugins/input-mask/plugin.js") }}></script>
     
+
 
     <script>
         $(function () {
@@ -68,5 +71,11 @@
                 })
                 @endif
             });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
+        });
     </script>
 </head>

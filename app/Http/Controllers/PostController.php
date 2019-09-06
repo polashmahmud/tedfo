@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\Http\Requests\PostRequest;
 use App\Post;
 use Carbon\Carbon;
 use App\Traits\UploadTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -29,7 +32,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('post.create');
+        $categories = Category::all();
+
+        return view('post.create', compact('categories'));
     }
 
     /**
@@ -38,13 +43,13 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        // $request->validate([
-        //     'image'     =>  'required|image|mimes:jpeg,png,jpg,gif|max:2048'
-        // ]);
-
         $post = new Post;
+        $post->title = $request->title;
+        $post->slug = Str::slug($request->slug, '-');
+        $post->body = $request->body;
+        $post->created_at = $request->created_at;
 
         if ($request->has('image')) {
             // Get image file
@@ -63,12 +68,11 @@ class PostController extends Controller
             $post->image = '/uploads/images/blank.jpeg';
         }
 
-        $post->title = $request->title;
-        $post->body = $request->body;
-        $post->created_at = Carbon::now();
         $post->save();
 
-        return "Done";
+        $post->categories()->attach($request->category);
+
+        return back()->with('success', 'Post Create Successfully!');
 
     }
 
@@ -91,7 +95,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $categories = Category::all();
+        return view('post.edit', compact('post', 'categories'));
     }
 
     /**
@@ -101,9 +106,33 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        $post->title = $request->title;
+        $post->slug = Str::slug($request->slug, '-');
+        $post->body = $request->body;
+        $post->created_at = $request->created_at;
+
+        if ($request->has('image')) {
+            // Get image file
+            $image = $request->file('image');
+            // Make a image name based on user name and current timestamp
+            $name = str_slug($request->input('name')).'_'.time();
+            // Define folder path
+            $folder = '/uploads/images/';
+            // Make a file path where image will be stored [ folder path + file name + file extension]
+            $filePath = $folder . $name. '.' . $image->getClientOriginalExtension();
+            // Upload image
+            $this->uploadOne($image, $folder, 'public', $name);
+            // Set user profile image path in database to filePath
+            $post->image = $filePath;
+        } 
+
+        $post->save();
+
+        $post->categories()->sync($request->category);
+
+        return redirect()->with('success', 'Post Create Successfully!');
     }
 
     /**
@@ -114,6 +143,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->categories()->detach();
+        $post->delete();
+        return back()->with('success', 'Post Delete Successfully!');
     }
 }

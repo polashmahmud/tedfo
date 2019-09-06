@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Categori;
+use App\Category;
 use App\Http\Requests\CategoriRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +16,7 @@ class CategoriController extends Controller
      */
     public function index()
     {
-        $categories = Categori::latest()->paginate(10);
+        $categories = Category::latest()->paginate(10);
 
         return view('categories.index', compact('categories'));
     }
@@ -39,7 +39,7 @@ class CategoriController extends Controller
      */
     public function store(CategoriRequest $request)
     {
-        Categori::create($request->all());
+        Category::create($request->all());
 
         return back()->with('success', 'Categories Create Successfully!');
     }
@@ -63,8 +63,8 @@ class CategoriController extends Controller
      */
     public function edit($id)
     {
-        $categori = Categori::findOrFail($id);
-        $categories = Categori::latest()->paginate(10);
+        $categori = Category::findOrFail($id);
+        $categories = Category::latest()->paginate(10);
         return view('categories.edit', compact('categories', 'categori'));
     }
 
@@ -77,7 +77,7 @@ class CategoriController extends Controller
      */
     public function update(CategoriRequest $request, $id)
     {
-        $categori = Categori::findOrFail($id);
+        $categori = Category::findOrFail($id);
         $categori->title = $request->title;
         $categori->save();
 
@@ -92,7 +92,7 @@ class CategoriController extends Controller
      */
     public function destroy($id)
     {
-        Categori::deleted($id);
+        Category::deleted($id);
         return back()->with('success', 'Categories Delete Successfully!');
     }
 }

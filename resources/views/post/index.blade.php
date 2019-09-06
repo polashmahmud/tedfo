@@ -23,7 +23,7 @@
                 <table class="table card-table table-striped table-vcenter">
                     <thead>
                         <tr>
-                            <th colspan="2"></th>
+                            <th></th>
                             <th>Post Title</th>
                             <th>Post Content</th>
                             <th>Categori</th>
@@ -34,25 +34,42 @@
                     <tbody>
                         @foreach ($posts as $post)
                         <tr>
-                            <td class="w-1"><span class="avatar"
-                                    style="background-image: url(./demo/faces/male/9.jpg)"></span></td>
+                            <td><span class="avatar" style="background-image: url({{ $post->image }})"></span></td>
                             <td>{{ $post->title }}</td>
                             <td>{{ $post->body }}</td>
-                            <td></td>
+                            <td>
+                                @foreach ($post->categories as $category)
+                                <span class="tag">{{ $category->title }}</span>
+                                @endforeach
+                            </td>
                             <td class="text-nowrap">{{ $post->created_at->format('M d, y') }}</td>
                             <td class="w-1">
-                                <a href="#" class="icon"><i class="fe fe-edit"></i></a>
-                                <a href="#" class="icon"><i class="fe fe-trash"></i></a>
+                                <a href="{{ route('post.edit', $post->id) }}" class="icon"><i
+                                        class="fe fe-edit"></i></a>
+                                <form id="delete-form-{{ $post->id }}" method="post"
+                                    action="{{ route('post.destroy', $post->id) }}" style="display: none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                <a class="icon" href="" onclick="if(confirm('Are you sure, You Want to delete this?'))
+                                        {
+                                        event.preventDefault();
+                                        document.getElementById('delete-form-{{ $post->id }}').submit();
+                                        }
+                                        else{
+                                        event.preventDefault();
+                                        }"><i class="fe fe-trash"></i>
+                                </a>
                             </td>
-                            
+
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 <hr>
                 <div class="ml-5">{{ $posts->links() }}</div>
-                
-                
+
+
             </div>
         </div>
     </div>
